@@ -11,15 +11,30 @@ public class MarkdownParse {
         // the next )
         int currentIndex = 0;
         while(currentIndex < markdown.length()) {
+            if (markdown.indexOf("[", currentIndex) == -1) {
+                break;
+            }
             int nextOpenBracket = markdown.indexOf("[", currentIndex);
+            if (markdown.charAt(nextOpenBracket - 1) == '!') {
+                currentIndex = nextOpenBracket + 1;
+                continue;
+            }
             int nextCloseBracket = markdown.indexOf("]", nextOpenBracket);
-            int openParen = markdown.indexOf("(", nextCloseBracket);
+            if (nextCloseBracket == -1) {
+                break;
+            }
+            int openParen = markdown.indexOf("(", nextCloseBracket);  
             int closeParen = markdown.indexOf(")", openParen);
+            if (closeParen == -1) {
+                break;
+            }
+            
             toReturn.add(markdown.substring(openParen + 1, closeParen));
             currentIndex = closeParen + 1;
         }
         return toReturn;
     }
+
     public static void main(String[] args) throws IOException {
 		Path fileName = Path.of(args[0]);
 	    String contents = Files.readString(fileName);
